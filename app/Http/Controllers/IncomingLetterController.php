@@ -39,11 +39,9 @@ class IncomingLetterController extends Controller
             'file' => 'required|mimes:pdf,jpeg,png|max:2048', // 2MB Max
         ]);
 
-        // Automatic Letter Numbering (e.g., SM/2026/05/001)
         $count = IncomingLetter::whereYear('created_at', date('Y'))->count() + 1;
         $letterNumber = 'SM/'.date('Y/m/').str_pad($count, 3, '0', STR_PAD_LEFT);
 
-        // Handle File Upload
         $filePath = $request->file('file')->store('incoming_letters', 'public');
 
         IncomingLetter::create([

@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('outgoing_letters', function (Blueprint $table) {
             $table->id();
+            $table->string('letter_number')->unique();
+            $table->date('letter_date');
+            $table->string('destination'); // Tujuan surat
+            $table->string('subject');     // Perihal
+            $table->text('description')->nullable();
+            $table->string('file_path')->nullable(); // Nullable because drafts might not have a file yet
+            $table->enum('status', ['draft', 'sent', 'archived'])->default('draft');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Who created the letter
             $table->timestamps();
         });
     }

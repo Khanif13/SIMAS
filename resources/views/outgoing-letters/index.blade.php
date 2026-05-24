@@ -82,7 +82,8 @@
                                             class="btn btn-sm btn-light border" title="Lihat Detail">
                                             <i class="fa-solid fa-eye text-secondary"></i>
                                         </a>
-                                        <a href="#" class="btn btn-sm btn-light border" title="Edit">
+                                        <a href="{{ route('outgoing-letters.edit', $letter->id) }}"
+                                            class="btn btn-sm btn-light border" title="Edit Data">
                                             <i class="fa-solid fa-pen text-primary"></i>
                                         </a>
                                         @if ($letter->file_path)
@@ -91,6 +92,16 @@
                                                 <i class="fa-solid fa-file-pdf text-danger"></i>
                                             </a>
                                         @endif
+
+                                        <form action="{{ route('outgoing-letters.destroy', $letter->id) }}" method="POST"
+                                            class="d-inline"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus surat keluar ini beserta berkasnya?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-light border" title="Hapus Data">
+                                                <i class="fa-solid fa-trash text-danger"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

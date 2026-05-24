@@ -50,7 +50,7 @@ class IncomingLetterController extends Controller
             'receipt_date' => 'required|date',
             'subject' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'file' => 'required|mimes:pdf,jpeg,png|max:2048',
+            'file' => 'required|mimes:pdf,jpeg,png|max:5048',
         ]);
 
         $count = IncomingLetter::whereYear('created_at', date('Y'))->count() + 1;

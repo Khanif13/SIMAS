@@ -9,14 +9,16 @@
             <a href="{{ route('outgoing-letters.index') }}" class="btn btn-outline-secondary shadow-sm me-2">
                 <i class="fa-solid fa-arrow-left me-1"></i> Kembali
             </a>
-            <a href="#" class="btn btn-warning shadow-sm me-2 text-dark fw-bold"
+            <a href="{{ route('outgoing-letters.edit', $letter->id) }}"
+                class="btn btn-warning shadow-sm me-2 text-dark fw-bold"
                 style="background-color: var(--primary-color); border: none;">
                 <i class="fa-solid fa-pen me-1"></i> Edit Surat
             </a>
-            <form action="#" method="POST" class="d-inline">
+            <form action="{{ route('outgoing-letters.destroy', $letter->id) }}" method="POST" class="d-inline"
+                onsubmit="return confirm('Apakah Anda yakin ingin menghapus surat keluar ini beserta seluruh berkasnya?');">
                 @csrf
                 @method('DELETE')
-                <button type="button" class="btn btn-danger shadow-sm">
+                <button type="submit" class="btn btn-danger shadow-sm">
                     <i class="fa-solid fa-trash me-1"></i> Hapus
                 </button>
             </form>

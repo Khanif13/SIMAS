@@ -1,38 +1,46 @@
 @extends('layouts.app')
 
-@section('title', 'Surat Keluar - SIMAS')
+@section('title', 'Daftar Surat Keluar - SIMAS')
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
         <h1 class="h3 fw-bold text-dark">Daftar Surat Keluar</h1>
-        <a href="#" class="btn btn-primary-custom shadow-sm">
+        <a href="{{ route('outgoing-letters.create') }}" class="btn btn-primary-custom shadow-sm">
             <i class="fa-solid fa-plus me-1"></i> Buat Surat Keluar
         </a>
     </div>
 
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="card shadow-sm mb-4 border-0">
         <div class="card-body">
-            <form action="#" method="GET" class="row g-3 align-items-center">
+            <form action="{{ route('outgoing-letters.index') }}" method="GET" class="row g-3 align-items-center">
                 <div class="col-md-5">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0"><i
                                 class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                        <input type="text" class="form-control border-start-0 ps-0"
-                            placeholder="Cari nomor surat, tujuan, perihal...">
+                        <input type="text" name="search" class="form-control border-start-0 ps-0"
+                            placeholder="Cari nomor surat, tujuan, perihal..." value="{{ request('search') }}">
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select">
-                        <option selected>Semua Status</option>
-                        <option value="draft">Draft</option>
-                        <option value="sent">Terkirim</option>
+                    <select name="status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="sent" {{ request('status') == 'sent' ? 'selected' : '' }}>Terkirim</option>
+                        <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>Diarsipkan</option>
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <input type="date" class="form-control">
+                    <input type="date" name="date" class="form-control" value="{{ request('date') }}">
                 </div>
                 <div class="col-md-2 d-grid">
-                    <button type="button" class="btn btn-secondary text-white shadow-sm">Filter</button>
+                    <button type="submit" class="btn btn-secondary text-white shadow-sm">Filter</button>
                 </div>
             </form>
         </div>
@@ -53,54 +61,59 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="ps-4 fw-bold text-secondary">SK/2026/05/042</td>
-                            <td>12 Mei 2026</td>
-                            <td>Kepala SMAN 1 Majene</td>
-                            <td>Permohonan Izin Observasi Data</td>
-                            <td><span class="badge bg-success">Terkirim</span></td>
-                            <td class="text-center">
-                                <div class="btn-group shadow-sm">
-                                    <button type="button" class="btn btn-sm btn-light border" title="Lihat Detail"><i
-                                            class="fa-solid fa-eye text-secondary"></i></button>
-                                    <button type="button" class="btn btn-sm btn-light border" title="Edit"><i
-                                            class="fa-solid fa-pen text-primary"></i></button>
-                                    <button type="button" class="btn btn-sm btn-light border" title="Cetak PDF"><i
-                                            class="fa-solid fa-print text-danger"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="ps-4 fw-bold text-secondary">SK/2026/05/043</td>
-                            <td>15 Mei 2026</td>
-                            <td>BEM Fakultas Teknik</td>
-                            <td>Pemberitahuan Peminjaman Ruangan</td>
-                            <td><span class="badge bg-warning text-dark">Draft</span></td>
-                            <td class="text-center">
-                                <div class="btn-group shadow-sm">
-                                    <button type="button" class="btn btn-sm btn-light border" title="Lihat Detail"><i
-                                            class="fa-solid fa-eye text-secondary"></i></button>
-                                    <button type="button" class="btn btn-sm btn-light border" title="Edit"><i
-                                            class="fa-solid fa-pen text-primary"></i></button>
-                                    <button type="button" class="btn btn-sm btn-light border" title="Kirim Surat"><i
-                                            class="fa-solid fa-paper-plane text-success"></i></button>
-                                </div>
-                            </td>
-                        </tr>
+                        @forelse($letters as $letter)
+                            <tr>
+                                <td class="ps-4 fw-bold text-secondary">{{ $letter->letter_number }}</td>
+                                <td>{{ \Carbon\Carbon::parse($letter->letter_date)->format('d M Y') }}</td>
+                                <td>{{ $letter->destination }}</td>
+                                <td>{{ $letter->subject }}</td>
+                                <td>
+                                    @if ($letter->status == 'draft')
+                                        <span class="badge bg-warning text-dark">Draft</span>
+                                    @elseif($letter->status == 'sent')
+                                        <span class="badge bg-success">Terkirim</span>
+                                    @else
+                                        <span class="badge bg-secondary">Diarsipkan</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group shadow-sm">
+                                        <a href="{{ route('outgoing-letters.show', $letter->id) }}"
+                                            class="btn btn-sm btn-light border" title="Lihat Detail">
+                                            <i class="fa-solid fa-eye text-secondary"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-sm btn-light border" title="Edit">
+                                            <i class="fa-solid fa-pen text-primary"></i>
+                                        </a>
+                                        @if ($letter->file_path)
+                                            <a href="{{ asset('storage/' . $letter->file_path) }}" target="_blank"
+                                                class="btn btn-sm btn-light border" title="Unduh / Lihat File">
+                                                <i class="fa-solid fa-file-pdf text-danger"></i>
+                                            </a>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="fa-solid fa-folder-open fa-2x mb-2 d-block opacity-50"></i>
+                                    Belum ada data surat keluar yang tersimpan di sistem.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="card-footer bg-white py-3 d-flex justify-content-between align-items-center border-top">
-            <small class="text-muted ps-2">Menampilkan 1 hingga 2 dari 85 entri</small>
-            <nav aria-label="Page navigation">
-                <ul class="pagination pagination-sm mb-0 pe-2">
-                    <li class="page-item disabled"><a class="page-link" href="#">Sebelumnya</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Selanjutnya</a></li>
-                </ul>
-            </nav>
+            <small class="text-muted ps-2">
+                Menampilkan {{ $letters->firstItem() ?? 0 }} hingga {{ $letters->lastItem() ?? 0 }} dari
+                {{ $letters->total() ?? 0 }} entri
+            </small>
+            <div class="pe-2">
+                {{ $letters->appends(request()->input())->links('pagination::bootstrap-5') }}
+            </div>
         </div>
     </div>
 @endsection

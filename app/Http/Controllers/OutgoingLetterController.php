@@ -48,7 +48,7 @@ class OutgoingLetterController extends Controller
             'letter_date' => 'required|date',
             'subject' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'file' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
+            'file' => 'nullable|mimes:pdf,jpg,jpeg,png|max:5048',
         ]);
 
         $count = OutgoingLetter::whereYear('created_at', date('Y'))->count() + 1;

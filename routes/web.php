@@ -1,57 +1,43 @@
 <?php
 
+use App\Http\Controllers\IncomingLetterController;
+use App\Http\Controllers\OutgoingLetterController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| TEMPORARY UI TESTING ROUTES (DUMMY DATA MODE)
+| WEB ROUTES
 |--------------------------------------------------------------------------
 */
 
-// Redirect root to dashboard
+// Redirect root ke dashboard
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
+// Dashboard Route (Sementara masih view langsung)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 
-// Surat Masuk Routes
-Route::get('/incoming-letters', function () {
-    return view('incoming-letters.index');
-});
-Route::get('/incoming-letters/create', function () {
-    return view('incoming-letters.create');
-});
-
-// Surat Keluar Route
-Route::get('/outgoing-letters', function () {
-    return view('outgoing-letters.index');
-});
-
-// Disposisi Route
-Route::get('/dispositions/show', function () {
-    return view('dispositions.show');
-});
-
 /*
 |--------------------------------------------------------------------------
-| BACKEND ROUTES (Commented out until controllers are built)
+| FITUR UTAMA SIMAS (Backend Routes)
 |--------------------------------------------------------------------------
 */
 
-// use App\Http\Controllers\DashboardController;
-// use App\Http\Controllers\IncomingLetterController;
+// Route::resource otomatis membuat rute bernama (index, create, store, show, edit, update, destroy)
+Route::resource('incoming-letters', IncomingLetterController::class);
+Route::resource('outgoing-letters', OutgoingLetterController::class);
 
-// Route::get('/', function () {
-//     return view('auth.login');
-// });
 
-// Route::middleware(['auth'])->group(function () {
-//     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-//
-//     Route::middleware(['role:admin,sekretaris'])->group(function () {
-//         Route::resource('incoming-letters', IncomingLetterController::class);
-//     });
-// });
+/*
+|--------------------------------------------------------------------------
+| FITUR MENDATANG
+|--------------------------------------------------------------------------
+*/
+
+// Disposisi Route (Masih view langsung karena controllernya belum dibuat penuh)
+Route::get('/dispositions/show', function () {
+    return view('dispositions.show');
+})->name('dispositions.show');

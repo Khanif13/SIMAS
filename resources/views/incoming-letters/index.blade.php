@@ -53,7 +53,7 @@
                     <thead class="table-light">
                         <tr>
                             <th class="ps-4">No Surat</th>
-                            <th>Tgl Terima</th>
+                            <th>Tanggal Terima</th>
                             <th>Pengirim</th>
                             <th>Perihal</th>
                             <th>Status</th>
@@ -76,7 +76,7 @@
                                         <span class="badge bg-success">Diarsipkan</span>
                                     @endif
                                 </td>
-                                <td class="text-center">
+                                {{-- <td class="text-center">
                                     <div class="btn-group shadow-sm">
                                         <a href="{{ route('incoming-letters.show', $letter->id) }}"
                                             class="btn btn-sm btn-light border" title="Lihat Detail">
@@ -90,6 +90,34 @@
                                         <form action="{{ route('incoming-letters.destroy', $letter->id) }}" method="POST"
                                             class="d-inline"
                                             onsubmit="return confirm('Apakah Anda yakin ingin menghapus surat masuk ini beserta berkasnya?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-light border" title="Hapus Data">
+                                                <i class="fa-solid fa-trash text-danger"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td> --}}
+                                <td class="text-center">
+                                    <div class="btn-group shadow-sm">
+                                        <a href="{{ route('incoming-letters.show', $letter->id) }}"
+                                            class="btn btn-sm btn-light border" title="Lihat Detail">
+                                            <i class="fa-solid fa-eye text-secondary"></i>
+                                        </a>
+                                        <a href="{{ route('incoming-letters.edit', $letter->id) }}"
+                                            class="btn btn-sm btn-light border" title="Edit Data">
+                                            <i class="fa-solid fa-pen text-primary"></i>
+                                        </a>
+                                        @if ($letter->file_path)
+                                            <a href="{{ asset('storage/' . $letter->file_path) }}" target="_blank"
+                                                class="btn btn-sm btn-light border" title="Unduh / Lihat File">
+                                                <i class="fa-solid fa-file-pdf text-danger"></i>
+                                            </a>
+                                        @endif
+
+                                        <form action="{{ route('incoming-letters.destroy', $letter->id) }}" method="POST"
+                                            class="d-inline"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus surat keluar ini beserta berkasnya?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-light border" title="Hapus Data">

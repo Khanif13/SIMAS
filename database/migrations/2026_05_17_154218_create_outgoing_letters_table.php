@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('letter_number')->unique();
             $table->date('letter_date');
-            $table->string('destination'); // Tujuan surat
-            $table->string('subject');     // Perihal
+            $table->string('destination'); 
+            $table->string('subject');     
             $table->text('description')->nullable();
-            $table->string('file_path')->nullable(); // Nullable because drafts might not have a file yet
+            $table->string('file_path')->nullable(); 
             $table->enum('status', ['draft', 'sent', 'archived'])->default('draft');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Who created the letter
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
             $table->timestamps();
         });
     }

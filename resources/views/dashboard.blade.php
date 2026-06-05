@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
         <h1 class="h3 fw-bold text-dark">Dashboard Overview</h1>
-        <div class="btn-group">
+        <div class="btn-group shadow-sm">
             <button class="btn btn-sm btn-outline-secondary">
                 <i class="fa-solid fa-calendar me-1"></i> Bulan Ini
             </button>
@@ -16,45 +16,50 @@
     </div>
 
     <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100 border-start border-4 border-primary shadow-sm">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <div class="text-xs fw-bold text-primary text-uppercase mb-1">Total Surat Masuk</div>
-                            <div class="h5 mb-0 fw-bold text-dark">142</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa-solid fa-inbox fa-2x text-muted opacity-50"></i>
+
+        <!-- CARD SURAT: Hanya muncul untuk Superadmin dan Admin -->
+        @if (in_array($role, ['superadmin', 'admin']))
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card h-100 border-0 border-start border-4 border-primary shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <div class="text-xs fw-bold text-primary text-uppercase mb-1">Total Surat Masuk</div>
+                                <div class="h5 mb-0 fw-bold text-dark">{{ $totalIncoming }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fa-solid fa-inbox fa-2x text-muted opacity-50"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100 border-start border-4 border-success shadow-sm">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <div class="text-xs fw-bold text-success text-uppercase mb-1">Total Surat Keluar</div>
-                            <div class="h5 mb-0 fw-bold text-dark">85</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa-solid fa-paper-plane fa-2x text-muted opacity-50"></i>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card h-100 border-0 border-start border-4 border-success shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <div class="text-xs fw-bold text-success text-uppercase mb-1">Total Surat Keluar</div>
+                                <div class="h5 mb-0 fw-bold text-dark">{{ $totalOutgoing }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fa-solid fa-paper-plane fa-2x text-muted opacity-50"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
 
+        <!-- CARD DISPOSISI: Muncul untuk Semua Role -->
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100 border-start border-4 border-info shadow-sm">
+            <div class="card h-100 border-0 border-start border-4 border-info shadow-sm">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col">
                             <div class="text-xs fw-bold text-info text-uppercase mb-1">Disposisi Aktif</div>
-                            <div class="h5 mb-0 fw-bold text-dark">12</div>
+                            <div class="h5 mb-0 fw-bold text-dark">0</div> <!-- Sementara 0 sampai fitur dibuat -->
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-share-nodes fa-2x text-muted opacity-50"></i>
@@ -65,15 +70,15 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100 border-start border-4 border-warning shadow-sm">
+            <div class="card h-100 border-0 border-start border-4 border-warning shadow-sm">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col">
-                            <div class="text-xs fw-bold text-warning text-uppercase mb-1">Perlu Tindakan</div>
-                            <div class="h5 mb-0 fw-bold text-dark">5</div>
+                            <div class="text-xs fw-bold text-warning text-uppercase mb-1">Total Pengguna</div>
+                            <div class="h5 mb-0 fw-bold text-dark">{{ $totalUsers ?? 0 }}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fa-solid fa-bell fa-2x text-muted opacity-50"></i>
+                            <i class="fa-solid fa-users fa-2x text-muted opacity-50"></i>
                         </div>
                     </div>
                 </div>
@@ -81,8 +86,9 @@
         </div>
     </div>
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-white py-3 d-flex flex-row align-items-center justify-content-between">
+    <!-- TABEL AKTIVITAS TERKINI (Nanti kita buat dinamis) -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 d-flex flex-row align-items-center justify-content-between border-bottom-0">
             <h6 class="m-0 fw-bold text-dark">Aktivitas Surat Terkini</h6>
         </div>
         <div class="card-body p-0">
@@ -121,14 +127,17 @@
                             </td>
                             <td>Pemberitahuan Jadwal Audit Internal</td>
                             <td>15 Mei 2026</td>
-                            <td><span class="badge bg-info">Disposisi</span></td>
+                            <td><span class="badge bg-info text-dark">Disposisi</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-white text-center py-3">
-            <a href="{{ url('/incoming-letters') }}" class="btn btn-sm btn-outline-primary">Lihat Semua Data</a>
-        </div>
+        @if (in_array($role, ['superadmin', 'admin']))
+            <div class="card-footer bg-light border-0 text-center py-3">
+                <a href="{{ url('/incoming-letters') }}" class="btn btn-sm btn-outline-primary shadow-sm">Lihat Semua
+                    Data</a>
+            </div>
+        @endif
     </div>
 @endsection

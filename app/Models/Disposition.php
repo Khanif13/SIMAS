@@ -9,7 +9,7 @@ class Disposition extends Model
     protected $fillable = [
         'incoming_letter_id',
         'user_id',
-        'assigned_to',
+        'assigned_user_id',
         'instruction',
         'due_date',
     ];
@@ -22,5 +22,10 @@ class Disposition extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_user_id');
     }
 }

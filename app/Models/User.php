@@ -42,6 +42,6 @@ class User extends Authenticatable
 
     public function dispositions()
     {
-        return $this->hasMany(Disposition::class);
+        return $this->hasMany(Disposition::class, 'user_id');
     }
 }

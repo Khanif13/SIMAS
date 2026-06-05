@@ -8,10 +8,20 @@ use Illuminate\Http\Request;
 
 class DispositionController extends Controller
 {
+    public function index()
+    {
+        $dispositions = Disposition::with(['incomingletter', 'user'])
+            ->where('assigned_user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('dispositions.index', compact('dispositions'));
+    }
+
     public function store(Request $request, $incomingLetterId)
     {
         $request->validate([
-            'assigned_to' => 'required|string',
+            'assigned_user_id' => 'required|exists:users,id',
             'instruction' => 'required|string',
             'due_date' => 'nullable|date',
         ]);
@@ -20,7 +30,7 @@ class DispositionController extends Controller
         Disposition::create([
             'incoming_letter_id' => $incomingLetterId,
             'user_id' => auth()->id(),
-            'assigned_to' => $request->assigned_to,
+            'assigned_user_id' => $request->assigned_user_id,
             'instruction' => $request->instruction,
             'due_date' => $request->due_date,
         ]);

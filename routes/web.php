@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DispositionController; // <-- Jangan lupa import ini
 use App\Http\Controllers\IncomingLetterController;
 use App\Http\Controllers\OutgoingLetterController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -10,34 +14,32 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Redirect root ke dashboard
-Route::get('/', function () {
-    return redirect()->route('dashboard');
+// RUTE PUBLIK (Akses halaman login)
+Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| RUTE TERLINDUNGI (Harus Login Terlebih Dahulu)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dispositions', [DispositionController::class, 'index'])->name('dispositions.index');
+    Route::resource('users', UserController::class)->except(['create', 'show']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | RUTE KHUSUS (Hanya untuk Superadmin dan Admin)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:superadmin,admin'])->group(function () {
+        Route::resource('incoming-letters', IncomingLetterController::class);
+        Route::resource('outgoing-letters', OutgoingLetterController::class);
+
+        Route::post('/incoming-letters/{id}/dispositions', [DispositionController::class, 'store'])->name('dispositions.store');
+    });
+
 });
-
-// Dashboard Route (Sementara masih view langsung)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
-
-/*
-|--------------------------------------------------------------------------
-| FITUR UTAMA SIMAS (Backend Routes)
-|--------------------------------------------------------------------------
-*/
-
-// Route::resource otomatis membuat rute bernama (index, create, store, show, edit, update, destroy)
-Route::resource('incoming-letters', IncomingLetterController::class);
-Route::resource('outgoing-letters', OutgoingLetterController::class);
-
-
-/*
-|--------------------------------------------------------------------------
-| FITUR MENDATANG
-|--------------------------------------------------------------------------
-*/
-
-// Disposisi Route (Masih view langsung karena controllernya belum dibuat penuh)
-Route::get('/dispositions/show', function () {
-    return view('dispositions.show');
-})->name('dispositions.show');

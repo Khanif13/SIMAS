@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\IncomingLetter;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -80,8 +81,11 @@ class IncomingLetterController extends Controller
     public function show($id)
     {
         $letter = IncomingLetter::findOrFail($id);
+        $users = User::where('role', 'member')
+            ->where('id', '!=', auth()->id())
+            ->get();
 
-        return view('incoming-letters.show', compact('letter'));
+        return view('incoming-letters.show', compact('letter', 'users'));
     }
 
     public function edit($id)

@@ -2,6 +2,10 @@
 
 @section('title', 'Detail Surat Masuk - SIMAS')
 
+@push('css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
 @section('content')
     <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
         <h1 class="h3 fw-bold text-dark">Detail Surat Masuk</h1>
@@ -26,9 +30,17 @@
         </div>
     </div>
 
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-lg-5 mb-4">
-            <div class="card shadow-sm border-0 h-100 mb-4">
+
+            <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
                     <i class="fa-solid fa-inbox fa-lg me-2 text-primary"></i>
                     <h5 class="mb-0 fw-bold text-dark">Informasi Surat Masuk</h5>
@@ -98,6 +110,48 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card shadow-sm border-0 border-start border-4 border-info">
+                <div class="card-header bg-white py-3 border-bottom-0 d-flex align-items-center">
+                    <h6 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-clock-rotate-left me-2 text-info"></i>Riwayat
+                        Disposisi</h6>
+                </div>
+                <div class="card-body p-0">
+                    @if ($letter->dispositions && $letter->dispositions->count() > 0)
+                        <ul class="list-group list-group-flush rounded-bottom">
+                            @foreach ($letter->dispositions as $disp)
+                                <li class="list-group-item p-3">
+                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                        <h6 class="mb-0 fw-bold text-primary">Ke:
+                                            {{ $disp->assignedUser->name ?? 'Pengguna Dihapus' }}</h6>
+                                        <small class="text-muted"
+                                            style="font-size: 0.75rem;">{{ $disp->created_at->format('d M Y, H:i') }}</small>
+                                    </div>
+                                    <p class="mb-1 text-dark small">{{ $disp->instruction }}</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <small class="text-muted" style="font-size: 0.75rem;"><i
+                                                class="fa-solid fa-user-pen me-1"></i>Oleh:
+                                            {{ $disp->user->name ?? 'Admin' }}</small>
+                                        @if ($disp->due_date)
+                                            <span
+                                                class="badge bg-danger bg-opacity-10 text-danger border border-danger rounded-pill"
+                                                style="font-size: 0.7rem;">
+                                                <i class="fa-solid fa-calendar-xmark me-1"></i>Tenggat:
+                                                {{ \Carbon\Carbon::parse($disp->due_date)->format('d M Y') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <div class="text-center p-4 text-muted">
+                            <i class="fa-solid fa-clipboard-check fa-2x mb-2 opacity-25"></i>
+                            <p class="mb-0 small">Belum ada instruksi disposisi untuk surat ini.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
 
         <div class="col-lg-7 mb-4">
@@ -139,4 +193,73 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="disposisiModal" tabindex="-1" aria-labelledby="disposisiModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-success text-white border-bottom-0">
+                    <h5 class="modal-title fw-bold" id="disposisiModalLabel"><i
+                            class="fa-solid fa-share-nodes me-2"></i>Buat Disposisi Baru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form action="{{ route('dispositions.store', $letter->id) }}" method="POST">
+                    @csrf
+                    <div class="modal-body p-4">
+                        <div class="alert alert-info bg-info bg-opacity-10 border-info border-start border-4 small mb-4">
+                            Silakan isi formulir di bawah ini untuk meneruskan tugas/instruksi dari surat
+                            <strong>{{ $letter->letter_number }}</strong>.
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="assigned_user_id" class="form-label fw-bold text-dark">Diteruskan Kepada (PIC)
+                                <span class="text-danger">*</span></label>
+                            <select class="form-select select2-search" id="assigned_user_id" name="assigned_user_id"
+                                required>
+                                <option value="" disabled selected>-- Cari dan Pilih Anggota --</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}
+                                        ({{ strtoupper($user->role) }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="due_date" class="form-label fw-bold text-dark">Tenggat Waktu <span
+                                    class="text-muted fw-normal">(Opsional)</span></label>
+                            <input type="date" class="form-control" id="due_date" name="due_date">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="instruction" class="form-label fw-bold text-dark">Instruksi / Catatan <span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control" id="instruction" name="instruction" rows="3"
+                                placeholder="Tuliskan instruksi yang harus dikerjakan..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light border-top-0">
+                        <button type="button" class="btn btn-secondary fw-bold px-4"
+                            data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success fw-bold px-4"><i
+                                class="fa-solid fa-paper-plane me-2"></i>Kirim</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2-search').select2({
+                dropdownParent: $('#disposisiModal'),
+                width: '100%',
+                placeholder: "-- Cari dan Pilih Anggota --"
+            });
+        });
+    </script>
+@endpush

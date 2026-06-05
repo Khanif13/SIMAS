@@ -30,12 +30,15 @@
                 </li>
             @endif
 
-            <li class="nav-item">
-                <a class="nav-link {{ request()->is('dispositions*') ? 'active' : '' }}"
-                    href="{{ url('/dispositions/show') }}">
-                    <i class="fa-solid fa-share-nodes me-2 w-20px"></i> Disposisi Saya
-                </a>
-            </li>
+            @if (Auth::check() && Auth::user()->role === 'member')
+                <li class="nav-item">
+                    <!-- Ubah href menjadi memanggil nama rute yang benar -->
+                    <a class="nav-link {{ request()->is('dispositions*') ? 'active' : '' }}"
+                        href="{{ route('dispositions.index') }}">
+                        <i class="fa-solid fa-share-nodes me-2 w-20px"></i> Disposisi Saya
+                    </a>
+                </li>
+            @endif
         </ul>
     </div>
 </nav>

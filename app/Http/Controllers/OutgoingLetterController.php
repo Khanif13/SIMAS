@@ -105,7 +105,6 @@ class OutgoingLetterController extends Controller
 
         $filePath = $letter->file_path;
         if ($request->hasFile('file')) {
-            // Hapus file lama jika ada file baru yang diunggah
             if ($letter->file_path && Storage::disk('public')->exists($letter->file_path)) {
                 Storage::disk('public')->delete($letter->file_path);
             }
@@ -129,7 +128,6 @@ class OutgoingLetterController extends Controller
     {
         $letter = OutgoingLetter::findOrFail($id);
 
-        // Hapus berkas file fisik di dalam storage sebelum menghapus baris database
         if ($letter->file_path && Storage::disk('public')->exists($letter->file_path)) {
             Storage::disk('public')->delete($letter->file_path);
         }

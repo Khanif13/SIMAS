@@ -17,7 +17,6 @@
 
     <div class="row mb-4">
 
-        <!-- CARD SURAT: Hanya muncul untuk Superadmin dan Admin -->
         @if (in_array($role, ['superadmin', 'admin']))
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card h-100 border-0 border-start border-4 border-primary shadow-sm">
@@ -52,14 +51,13 @@
             </div>
         @endif
 
-        <!-- CARD DISPOSISI: Muncul untuk Semua Role -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card h-100 border-0 border-start border-4 border-info shadow-sm">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col">
                             <div class="text-xs fw-bold text-info text-uppercase mb-1">Disposisi Aktif</div>
-                            <div class="h5 mb-0 fw-bold text-dark">0</div> <!-- Sementara 0 sampai fitur dibuat -->
+                            <div class="h5 mb-0 fw-bold text-dark">0</div>
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-share-nodes fa-2x text-muted opacity-50"></i>
@@ -86,7 +84,6 @@
         </div>
     </div>
 
-    <!-- TABEL AKTIVITAS TERKINI (Nanti kita buat dinamis) -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3 d-flex flex-row align-items-center justify-content-between border-bottom-0">
             <h6 class="m-0 fw-bold text-dark">Aktivitas Surat Terkini</h6>
@@ -99,44 +96,55 @@
                             <th class="ps-4">No Surat</th>
                             <th>Jenis</th>
                             <th>Perihal</th>
-                            <th>Tanggal</th>
+                            <th>Ditambahkan Pada</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="ps-4 fw-bold text-secondary">SM/2026/05/001</td>
-                            <td><span class="badge bg-primary bg-opacity-10 text-primary border border-primary">Masuk</span>
-                            </td>
-                            <td>Undangan Rapat Koordinasi Fakultas</td>
-                            <td>18 Mei 2026</td>
-                            <td><span class="badge bg-warning text-dark">Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td class="ps-4 fw-bold text-secondary">SK/2026/05/042</td>
-                            <td><span
-                                    class="badge bg-success bg-opacity-10 text-success border border-success">Keluar</span>
-                            </td>
-                            <td>Permohonan Izin Laporan Data</td>
-                            <td>16 Mei 2026</td>
-                            <td><span class="badge bg-success">Terkirim</span></td>
-                        </tr>
-                        <tr>
-                            <td class="ps-4 fw-bold text-secondary">SM/2026/05/002</td>
-                            <td><span class="badge bg-primary bg-opacity-10 text-primary border border-primary">Masuk</span>
-                            </td>
-                            <td>Pemberitahuan Jadwal Audit Internal</td>
-                            <td>15 Mei 2026</td>
-                            <td><span class="badge bg-info text-dark">Disposisi</span></td>
-                        </tr>
+                        @forelse($recentActivities as $activity)
+                            <tr>
+                                <td class="ps-4 fw-bold text-secondary">{{ $activity->letter_number }}</td>
+
+                                <td>
+                                    @if ($activity->type == 'masuk')
+                                        <span
+                                            class="badge bg-primary bg-opacity-10 text-primary border border-primary">Masuk</span>
+                                    @else
+                                        <span
+                                            class="badge bg-success bg-opacity-10 text-success border border-success">Keluar</span>
+                                    @endif
+                                </td>
+
+                                <td>{{ Str::limit($activity->subject, 40) }}</td>
+                                <td>{{ \Carbon\Carbon::parse($activity->date)->format('d M Y - H:i') }}</td>
+
+                                <td>
+                                    @if ($activity->status == 'pending' || $activity->status == 'draft')
+                                        <span class="badge bg-warning text-dark">{{ ucfirst($activity->status) }}</span>
+                                    @elseif($activity->status == 'dispositioned' || $activity->status == 'sent')
+                                        <span class="badge bg-info text-dark">{{ ucfirst($activity->status) }}</span>
+                                    @else
+                                        <span class="badge bg-success">{{ ucfirst($activity->status) }}</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    <i class="fa-solid fa-folder-open fa-2x mb-2 d-block opacity-50"></i>
+                                    Belum ada aktivitas surat di sistem saat ini.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
+
         @if (in_array($role, ['superadmin', 'admin']))
             <div class="card-footer bg-light border-0 text-center py-3">
-                <a href="{{ url('/incoming-letters') }}" class="btn btn-sm btn-outline-primary shadow-sm">Lihat Semua
-                    Data</a>
+                <a href="{{ url('/incoming-letters') }}" class="btn btn-sm btn-outline-primary shadow-sm">Kelola Data
+                    Surat</a>
             </div>
         @endif
     </div>

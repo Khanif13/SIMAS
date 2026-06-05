@@ -26,7 +26,6 @@ class DispositionController extends Controller
             'due_date' => 'nullable|date',
         ]);
 
-        // Create the disposition
         Disposition::create([
             'incoming_letter_id' => $incomingLetterId,
             'user_id' => auth()->id(),

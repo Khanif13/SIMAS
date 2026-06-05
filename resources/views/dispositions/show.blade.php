@@ -9,7 +9,6 @@
     </div>
 
     <div class="row">
-        <!-- Kolom Kiri: Informasi Surat -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-light fw-bold text-uppercase text-muted">
@@ -40,7 +39,6 @@
             </div>
         </div>
 
-        <!-- Kolom Kanan: Form Disposisi -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header text-white"

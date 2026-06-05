@@ -76,7 +76,6 @@
         @endforelse
     </div>
 
-    <!-- Pagination jika datanya banyak -->
     <div class="d-flex justify-content-center mt-4">
         {{ $dispositions->links('pagination::bootstrap-5') }}
     </div>

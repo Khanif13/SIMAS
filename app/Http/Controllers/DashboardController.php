@@ -14,15 +14,12 @@ class DashboardController extends Controller
     {
         $role = Auth::user()->role;
 
-        // Hitung total data global (Untuk Admin)
         $totalIncoming = IncomingLetter::count();
         $totalOutgoing = OutgoingLetter::count();
         $totalUsers = User::count();
 
-        // Hitung total disposisi khusus untuk user yang sedang login (Untuk Member)
         $activeDispositions = Disposition::where('assigned_user_id', Auth::id())->count();
 
-        // Mengambil 5 surat masuk terbaru
         $recentIncoming = IncomingLetter::latest()->take(5)->get()->map(function ($letter) {
             return (object) [
                 'type' => 'masuk',
@@ -33,7 +30,6 @@ class DashboardController extends Controller
             ];
         });
 
-        // Mengambil 5 surat keluar terbaru
         $recentOutgoing = OutgoingLetter::latest()->take(5)->get()->map(function ($letter) {
             return (object) [
                 'type' => 'keluar',
@@ -44,10 +40,8 @@ class DashboardController extends Controller
             ];
         });
 
-        // Menggabungkan kedua koleksi, lalu mengurutkan
         $recentActivities = $recentIncoming->concat($recentOutgoing)->sortByDesc('date')->take(5);
 
-        // Lempar variabel baru ($activeDispositions) ke view
         return view('dashboard', compact(
             'totalIncoming',
             'totalOutgoing',

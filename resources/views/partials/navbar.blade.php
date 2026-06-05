@@ -10,7 +10,6 @@
 
     <div class="navbar-nav w-100 d-flex flex-row justify-content-end px-3 py-2">
         <div class="nav-item text-nowrap d-flex align-items-center">
-            <!-- Menampilkan Nama & Role Pengguna -->
             <div class="text-end me-3 d-none d-sm-block">
                 <span class="d-block fw-bold mb-0" style="color: var(--secondary-color); line-height: 1;">Halo,
                     {{ Auth::user()->name }}!</span>
@@ -18,7 +17,6 @@
                     style="font-size: 0.7rem; font-weight: 800;">{{ Auth::user()->role }}</small>
             </div>
 
-            <!-- Tombol Logout Menggunakan Form POST -->
             <form action="{{ route('logout') }}" method="POST" class="m-0">
                 @csrf
                 <button type="submit" class="btn btn-sm btn-outline-danger px-3 shadow-sm">

@@ -30,9 +30,16 @@
                 </li>
             @endif
 
+            @if (Auth::check() && Auth::user()->role === 'superadmin')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('users*') ? 'active' : '' }}" href="{{ url('/users') }}">
+                        <i class="fa-solid fa-users-gear me-2 w-20px"></i> Kelola Pengguna
+                    </a>
+                </li>
+            @endif
+
             @if (Auth::check() && Auth::user()->role === 'member')
                 <li class="nav-item">
-                    <!-- Ubah href menjadi memanggil nama rute yang benar -->
                     <a class="nav-link {{ request()->is('dispositions*') ? 'active' : '' }}"
                         href="{{ route('dispositions.index') }}">
                         <i class="fa-solid fa-share-nodes me-2 w-20px"></i> Disposisi Saya

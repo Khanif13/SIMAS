@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Disposition;
 use App\Models\IncomingLetter;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DispositionController extends Controller
@@ -36,6 +38,14 @@ class DispositionController extends Controller
 
         $letter = IncomingLetter::findOrFail($incomingLetterId);
         $letter->update(['status' => 'dispositioned']);
+
+        $assignedUser = User::find($request->assigned_user_id);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'Kirim Disposisi',
+            'description' => 'Mengirimkan disposisi/tugas dari surat nomor: '.$letter->letter_number.' kepada anggota: '.($assignedUser->name ?? 'Tidak diketahui'),
+        ]);
 
         return back()->with('success', 'Disposisi berhasil dikirim.');
     }

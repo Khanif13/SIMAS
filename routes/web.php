@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DispositionController; // <-- Jangan lupa import ini
 use App\Http\Controllers\IncomingLetterController;
 use App\Http\Controllers\OutgoingLetterController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,7 +31,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dispositions', [DispositionController::class, 'index'])->name('dispositions.index');
     Route::resource('users', UserController::class)->except(['create', 'show']);
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     /*
     |--------------------------------------------------------------------------
     | RUTE KHUSUS (Hanya untuk Superadmin dan Admin)

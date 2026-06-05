@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\IncomingLetter;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class IncomingLetterController extends Controller
         }
 
         if ($request->has('status') && $request->input('status') != '') {
-            $query->where('status', $request->status('status'));
+            $query->where('status', $request->input('status'));
         }
         $letters = $query->orderBy('created_at', 'desc')->paginate(10);
 
@@ -62,7 +63,7 @@ class IncomingLetterController extends Controller
             $filePath = $request->file('file')->store('incoming_letters', 'public');
         }
 
-        IncomingLetter::create([
+        $letter = IncomingLetter::create([
             'letter_number' => $letterNumber,
             'receipt_date' => $request->receipt_date,
             'letter_date' => $request->letter_date,
@@ -72,6 +73,12 @@ class IncomingLetterController extends Controller
             'file_path' => $filePath,
             'status' => 'pending',
             'user_id' => Auth::id() ?? 1,
+        ]);
+
+        ActivityLog::create([
+            'user_id' => Auth::id() ?? 1,
+            'action' => 'Tambah Surat Masuk',
+            'description' => 'Menambahkan surat masuk baru dengan nomor: '.$letter->letter_number,
         ]);
 
         return redirect()->route('incoming-letters.index')
@@ -105,8 +112,8 @@ class IncomingLetterController extends Controller
             'receipt_date' => 'required|date',
             'subject' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'file' => 'nullable|mimes:pdf, jpg, jpeg, png|max:5048',
-            'status' => 'required|in:pending, dispositioned, archived',
+            'file' => 'nullable|mimes:pdf,jpg,jpeg,png|max:5048',
+            'status' => 'required|in:pending,dispositioned,archived',
         ]);
 
         $filePath = $letter->file_path;
@@ -127,15 +134,29 @@ class IncomingLetterController extends Controller
             'status' => $request->status,
         ]);
 
+        ActivityLog::create([
+            'user_id' => Auth::id() ?? 1,
+            'action' => 'Edit Surat Masuk',
+            'description' => 'Memperbarui data surat masuk nomor: '.$letter->letter_number,
+        ]);
+
         return redirect()->route('incoming-letters.index')->with('success', 'Data Surat Masuk berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         $letter = IncomingLetter::findOrFail($id);
+
         if ($letter->file_path && Storage::disk('public')->exists($letter->file_path)) {
             Storage::disk('public')->delete($letter->file_path);
         }
+
+        ActivityLog::create([
+            'user_id' => Auth::id() ?? 1,
+            'action' => 'Hapus Surat Masuk',
+            'description' => 'Menghapus surat masuk nomor: '.$letter->letter_number.' dari sistem.',
+        ]);
+
         $letter->delete();
 
         return redirect()->route('incoming-letters.index')->with('success', 'Data Surat Masuk berhasil dihapus');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\OutgoingLetter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -61,7 +62,7 @@ class OutgoingLetterController extends Controller
 
         $status = $request->hasFile('file') ? 'sent' : 'draft';
 
-        OutgoingLetter::create([
+        $letter = OutgoingLetter::create([
             'letter_number' => $letterNumber,
             'letter_date' => $request->letter_date,
             'destination' => $request->destination,
@@ -70,6 +71,12 @@ class OutgoingLetterController extends Controller
             'file_path' => $filePath,
             'status' => $status,
             'user_id' => Auth::id() ?? 1,
+        ]);
+
+        ActivityLog::create([
+            'user_id' => Auth::id() ?? 1,
+            'action' => 'Tambah Surat Keluar',
+            'description' => 'Menambahkan surat keluar baru dengan nomor: '.$letter->letter_number,
         ]);
 
         return redirect()->route('outgoing-letters.index')
@@ -120,6 +127,12 @@ class OutgoingLetterController extends Controller
             'status' => $request->status,
         ]);
 
+        ActivityLog::create([
+            'user_id' => Auth::id() ?? 1,
+            'action' => 'Edit Surat Keluar',
+            'description' => 'Memperbarui data surat keluar nomor: '.$letter->letter_number,
+        ]);
+
         return redirect()->route('outgoing-letters.index')
             ->with('success', 'Data Surat Keluar berhasil diperbarui.');
     }
@@ -131,6 +144,12 @@ class OutgoingLetterController extends Controller
         if ($letter->file_path && Storage::disk('public')->exists($letter->file_path)) {
             Storage::disk('public')->delete($letter->file_path);
         }
+
+        ActivityLog::create([
+            'user_id' => Auth::id() ?? 1,
+            'action' => 'Hapus Surat Keluar',
+            'description' => 'Menghapus surat keluar nomor: '.$letter->letter_number.' dari sistem.',
+        ]);
 
         $letter->delete();
 

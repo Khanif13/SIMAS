@@ -1,28 +1,43 @@
-<header class="navbar top-navbar sticky-top flex-md-nowrap p-0 shadow-sm">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fw-bold" style="color: var(--secondary-color);" href="#">
-        <span class="d-md-none">SIMAS</span>
-    </a>
+<header class="d-flex justify-content-between align-items-center py-3 mb-4 border-bottom">
+    <div class="d-flex align-items-center">
+        <h5 class="mb-0 fw-bold text-dark d-none d-md-block">
+            @yield('title', 'SIMAS')
+        </h5>
+    </div>
 
-    <button class="navbar-toggler position-absolute d-md-none collapsed mt-2 ms-2" type="button" data-bs-toggle="collapse"
-        data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+    <div class="d-flex align-items-center">
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle border-0"
+                id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="text-end me-3 d-none d-md-block">
+                    <h6 class="mb-0 fw-bold text-primary">Halo, {{ Auth::user()->name }}!</h6>
+                    <small class="text-muted text-uppercase fw-bold"
+                        style="font-size: 0.7rem;">{{ Auth::user()->role }}</small>
+                </div>
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                    style="width: 40px; height: 40px;">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            </a>
 
-    <div class="navbar-nav w-100 d-flex flex-row justify-content-end px-3 py-2">
-        <div class="nav-item text-nowrap d-flex align-items-center">
-            <div class="text-end me-3 d-none d-sm-block">
-                <span class="d-block fw-bold mb-0" style="color: var(--secondary-color); line-height: 1;">Halo,
-                    {{ Auth::user()->name }}!</span>
-                <small class="text-muted text-uppercase"
-                    style="font-size: 0.7rem; font-weight: 800;">{{ Auth::user()->role }}</small>
-            </div>
-
-            <form action="{{ route('logout') }}" method="POST" class="m-0">
-                @csrf
-                <button type="submit" class="btn btn-sm btn-outline-danger px-3 shadow-sm">
-                    <i class="fa-solid fa-right-from-bracket me-1"></i> Sign out
-                </button>
-            </form>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-3" aria-labelledby="dropdownUser">
+                <li>
+                    <a class="dropdown-item py-2" href="{{ route('profile.edit') }}">
+                        <i class="fa-solid fa-user-pen me-2 text-primary"></i> Profil Saya
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider m-0">
+                </li>
+                <li>
+                    <form action="{{ route('logout') }}" method="POST" class="m-0 p-0">
+                        @csrf
+                        <button type="submit" class="dropdown-item py-2 text-danger fw-bold">
+                            <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Sign out
+                        </button>
+                    </form>
+                </li>
+            </ul>
         </div>
     </div>
 </header>

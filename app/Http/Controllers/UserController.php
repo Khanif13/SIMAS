@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -90,6 +91,12 @@ class UserController extends Controller
         if ($user->id === auth()->id()) {
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'Hapus Pengguna',
+            'description' => 'Menghapus akun pengguna bernama: '.$user->name.' ('.$user->email.')',
+        ]);
 
         $user->delete();
 

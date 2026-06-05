@@ -28,6 +28,12 @@
                         <i class="fa-solid fa-paper-plane me-2 w-20px"></i> Surat Keluar
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('activity-logs*') ? 'active' : '' }}"
+                        href="{{ route('activity-logs.index') }}">
+                        <i class="fa-solid fa-clipboard-list me-2 w-20px"></i> Log Aktivitas
+                    </a>
+                </li>
             @endif
 
             @if (Auth::check() && Auth::user()->role === 'superadmin')

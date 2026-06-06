@@ -5,17 +5,26 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
         <h1 class="h3 fw-bold text-dark">Dashboard Overview</h1>
-        <div class="btn-group shadow-sm">
-            <button class="btn btn-sm btn-outline-secondary">
-                <i class="fa-solid fa-calendar me-1"></i> Bulan Ini
-            </button>
-            <button class="btn btn-sm btn-outline-secondary">
-                <i class="fa-solid fa-download me-1"></i> Export Laporan
-            </button>
-        </div>
+
+        <!-- Sembunyikan tombol untuk Member, hanya tampilkan untuk Admin/Superadmin -->
+        @if (in_array($role, ['superadmin', 'admin']))
+            <div class="btn-group shadow-sm">
+                <button class="btn btn-sm btn-outline-secondary" disabled>
+                    <i class="fa-solid fa-calendar me-1"></i> Bulan Ini
+                </button>
+
+                <!-- TOMBOL EXPORT YANG SUDAH BERFUNGSI -->
+                <a href="{{ route('dashboard.export') }}" class="btn btn-sm btn-outline-primary fw-bold">
+                    <i class="fa-solid fa-file-excel me-1"></i> Export Laporan (.CSV)
+                </a>
+            </div>
+        @endif
     </div>
 
     <div class="row mb-4">
+        <!-- ========================================== -->
+        <!-- AREA CARD KHUSUS ADMIN & SUPERADMIN        -->
+        <!-- ========================================== -->
         @if (in_array($role, ['superadmin', 'admin']))
             <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card h-100 border-0 border-start border-4 border-primary shadow-sm">
@@ -63,9 +72,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
         @endif
 
+        <!-- ========================================== -->
+        <!-- AREA CARD KHUSUS MEMBER                    -->
+        <!-- ========================================== -->
         @if ($role === 'member')
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card h-100 border-0 border-start border-4 border-info shadow-sm">
@@ -99,6 +110,9 @@
         @endif
     </div>
 
+    <!-- ========================================== -->
+    <!-- TABEL AKTIVITAS SURAT TERKINI              -->
+    <!-- ========================================== -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3 d-flex flex-row align-items-center justify-content-between border-bottom-0">
             <h6 class="m-0 fw-bold text-dark">Aktivitas Surat Terkini</h6>

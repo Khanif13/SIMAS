@@ -29,12 +29,17 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/export', [DashboardController::class, 'export'])->name('dashboard.export');
+
     Route::get('/dispositions', [DispositionController::class, 'index'])->name('dispositions.index');
+    
     Route::resource('users', UserController::class)->except(['create', 'show']);
+    
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     /*
     |--------------------------------------------------------------------------
     | RUTE KHUSUS (Hanya untuk Superadmin dan Admin)

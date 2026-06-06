@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -41,5 +42,36 @@ class ProfileController extends Controller
         $user->save();
 
         return back()->with('success', 'Informasi profil berhasil diperbarui.');
+    }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+        ]);
+
+        $user = Auth::user();
+
+        if (! Hash::check($request->password, $user->password)) {
+            return back()->withErrors(['password' => 'Kata sandi yang Anda masukkan salah.']);
+        }
+
+        if ($user->id === 1) {
+            return back()->with('error', 'Sistem menolak! Akun Superadmin Utama tidak dapat dihapus.');
+        }
+
+        ActivityLog::create([
+            'user_id' => 1,
+            'action' => 'Hapus Akun Mandiri',
+            'description' => 'Pengguna ['.strtoupper($user->role)."] bernama {$user->name} ({$user->email}) telah menghapus akunnya sendiri secara permanen.",
+        ]);
+
+        Auth::logout();
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with('success', 'Akun Anda telah berhasil dihapus secara permanen.');
     }
 }

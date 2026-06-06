@@ -8,9 +8,16 @@
             <h1 class="h3 fw-bold text-dark">Log Aktivitas Sistem</h1>
             <p class="text-muted mb-0">Riwayat rekaman seluruh aktivitas pengguna di dalam aplikasi.</p>
         </div>
-        <button class="btn btn-outline-secondary shadow-sm" disabled>
-            <i class="fa-solid fa-shield-halved me-1 text-success"></i> Secured
-        </button>
+
+        <!-- GABUNGAN TOMBOL SECURED & EXPORT -->
+        <div class="btn-group shadow-sm">
+            <button class="btn btn-outline-secondary" disabled>
+                <i class="fa-solid fa-shield-halved me-1 text-success"></i> Secured
+            </button>
+            <a href="{{ route('activity-logs.export') }}" class="btn btn-outline-primary fw-bold">
+                <i class="fa-solid fa-file-excel me-1"></i> Export Log (.CSV)
+            </a>
+        </div>
     </div>
 
     <div class="card border-0 shadow-sm mb-4">

@@ -32,10 +32,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/export', [DashboardController::class, 'export'])->name('dashboard.export');
 
     Route::get('/dispositions', [DispositionController::class, 'index'])->name('dispositions.index');
-    
+
     Route::resource('users', UserController::class)->except(['create', 'show']);
-    
+
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::get('/activity-logs/export', [ActivityLogController::class, 'export'])->name('activity-logs.export');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

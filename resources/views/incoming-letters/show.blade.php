@@ -220,7 +220,8 @@
                                 <option value="" disabled selected>-- Cari dan Pilih Anggota --</option>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }}
-                                        ({{ strtoupper($user->role) }})</option>
+                                        ({{ strtoupper($user->role) }})
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -245,6 +246,76 @@
                                 class="fa-solid fa-paper-plane me-2"></i>Kirim</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+            <i class="fa-solid fa-list-check fa-lg me-2 text-primary"></i>
+            <h5 class="mb-0 fw-bold text-dark">Tracking Disposisi & Laporan</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4 py-3">Penerima Tugas</th>
+                            <th style="width: 35%;">Instruksi (Dari Admin)</th>
+                            <th style="width: 40%;">Status & Laporan (Feedback Member)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($letter->dispositions as $disp)
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex justify-content-center align-items-center me-3"
+                                            style="width: 40px; height: 40px;">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark">
+                                                {{ $disp->assignedUser->name ?? 'Anggota Dihapus' }}</h6>
+                                            <small class="text-muted">Tenggat:
+                                                {{ $disp->due_date ? \Carbon\Carbon::parse($disp->due_date)->format('d M Y') : '-' }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-dark small">{{ $disp->instruction }}</p>
+                                </td>
+                                <td>
+                                    @if ($disp->status === 'completed')
+                                        <span class="badge bg-success mb-2"><i
+                                                class="fa-solid fa-check-double me-1"></i>Selesai</span>
+                                        <div
+                                            class="p-2 bg-light border-start border-4 border-success rounded small text-dark">
+                                            <strong>Catatan:</strong> {{ $disp->feedback_note ?? 'Tidak ada catatan.' }}
+                                        </div>
+                                    @elseif ($disp->feedback_note)
+                                        <span class="badge bg-warning text-dark mb-2"><i
+                                                class="fa-solid fa-spinner fa-spin me-1"></i>Proses (Ada Update)</span>
+                                        <div
+                                            class="p-2 bg-light border-start border-4 border-warning rounded small text-dark">
+                                            <strong>Update Terkini:</strong> {{ $disp->feedback_note }}
+                                        </div>
+                                    @else
+                                        <span class="badge bg-secondary"><i class="fa-solid fa-clock me-1"></i>Menunggu
+                                            Dikerjakan</span>
+                                        <p class="mb-0 text-muted small mt-1">Belum ada laporan dari anggota.</p>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted">
+                                    <i class="fa-solid fa-share-nodes fa-2x mb-2 d-block opacity-25"></i>
+                                    Belum ada instruksi disposisi yang dibuat untuk surat ini.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

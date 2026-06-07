@@ -9,7 +9,6 @@
             <p class="text-muted mb-0">Riwayat rekaman seluruh aktivitas pengguna di dalam aplikasi.</p>
         </div>
 
-        <!-- GABUNGAN TOMBOL SECURED & EXPORT -->
         <div class="btn-group shadow-sm">
             <button class="btn btn-outline-secondary" disabled>
                 <i class="fa-solid fa-shield-halved me-1 text-success"></i> Secured

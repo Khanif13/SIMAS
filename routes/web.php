@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/export', [DashboardController::class, 'export'])->name('dashboard.export');
 
     Route::get('/dispositions', [DispositionController::class, 'index'])->name('dispositions.index');
+    Route::put('/dispositions/{id}/feedback', [DispositionController::class, 'submitFeedback'])->name('dispositions.feedback');
 
     Route::resource('users', UserController::class)->except(['create', 'show']);
 

@@ -49,4 +49,31 @@ class DispositionController extends Controller
 
         return back()->with('success', 'Disposisi berhasil dikirim.');
     }
+
+    public function submitFeedback(Request $request, $id)
+    {
+        $disposition = Disposition::findOrFail($id);
+
+        if (auth()->id() !== $disposition->assigned_user_id) {
+            abort(403, 'Akses Ditolak');
+        }
+
+        $request->validate([
+            'feedback_note' => 'required|string',
+            'status' => 'required|in:pending,completed',
+        ]);
+
+        $disposition->update([
+            'feedback_note' => $request->feedback_note,
+            'status' => $request->status,
+        ]);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'Feedback Disposisi',
+            'description' => 'Memberikan laporan/feedback pada tugas disposisi dari surat nomor: '.($disposition->incomingletter->letter_number ?? 'Tidak diketahui'),
+        ]);
+
+        return back()->with('success', 'Laporan feedback disposisi berhasil dikirim ke Admin.');
+    }
 }

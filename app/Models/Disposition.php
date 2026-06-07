@@ -12,6 +12,8 @@ class Disposition extends Model
         'assigned_user_id',
         'instruction',
         'due_date',
+        'status',
+        'feedback_note',
     ];
 
     public function incomingletter()
